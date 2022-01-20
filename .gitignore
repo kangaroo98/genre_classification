@@ -5,6 +5,9 @@ __pycache__/
 
 # cutsom project settings
 .DS_Store
+mlruns/
+outputs/2022-01-20/
+download/wandb/
 
 # C extensions
 *.so

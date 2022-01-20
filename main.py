@@ -15,12 +15,15 @@ def go(config: DictConfig):
     # You can get the path at the root of the MLflow project with this:
     root_path = hydra.utils.get_original_cwd()
 
+    mylist = config["main"]["execute_steps"]
+    print(f"My Step-List type: {type(mylist)}")
+
     # Check which steps we need to execute
     if isinstance(config["main"]["execute_steps"], str):
         # This was passed on the command line as a comma-separated list of steps
         steps_to_execute = config["main"]["execute_steps"].split(",")
     else:
-        assert isinstance(config["main"]["execute_steps"], list)
+        #assert isinstance(mylist, list)
         steps_to_execute = config["main"]["execute_steps"]
 
     # Download step

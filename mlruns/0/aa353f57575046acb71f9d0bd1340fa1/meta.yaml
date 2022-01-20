@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/oliver/Development/genre_classification/mlruns/0/aa353f57575046acb71f9d0bd1340fa1/artifacts
+end_time: 1642679201141
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: aa353f57575046acb71f9d0bd1340fa1
+run_uuid: aa353f57575046acb71f9d0bd1340fa1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1642679194482
+status: 4
+tags: []
+user_id: oliver
