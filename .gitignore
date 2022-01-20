@@ -7,7 +7,18 @@ __pycache__/
 .DS_Store
 mlruns/
 outputs/2022-01-20/
+
 download/wandb/
+preprocess/wandb/
+preprocess/artifacts/
+check_data/wandb/
+check_data/artifacts/
+segregate/wandb/
+segregate/artifacts/
+random_forest/wandb/
+random_forest/artifacts/
+evaluate/wandb/
+evaluate/artifacts/
 
 # C extensions
 *.so

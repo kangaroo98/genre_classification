@@ -161,16 +161,19 @@ def get_training_inference_pipeline(args):
     # - one for textual ("nlp") features
     # Categorical preprocessing pipeline
     categorical_features = sorted(model_config["features"]["categorical"])
+    logger.info(f"Categorical features: {categorical_features}")
     categorical_transformer = make_pipeline(
         SimpleImputer(strategy="constant", fill_value=0), OrdinalEncoder()
     )
     # Numerical preprocessing pipeline
     numeric_features = sorted(model_config["features"]["numerical"])
+    logger.info(f"Numeric features: {numeric_features}")
     numeric_transformer = make_pipeline(
         SimpleImputer(strategy="median"), StandardScaler()
     )
     # Textual ("nlp") preprocessing pipeline
     nlp_features = sorted(model_config["features"]["nlp"])
+    logger.info(f"NLP features: {nlp_features}")
     # This trick is needed because SimpleImputer wants a 2d input, but
     # TfidfVectorizer wants a 1d input. So we reshape in between the two steps
     reshape_to_1d = FunctionTransformer(np.reshape, kw_args={"newshape": -1})

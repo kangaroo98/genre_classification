@@ -7,7 +7,10 @@ entry_points:
       input_artifact:
         description: Fully qualified name for the artifact
         type: str
-      artifact_root:
+      artifact_train_data:
+        description: Name for the W&B artifact that will be created
+        type: str
+      artifact_test_data:
         description: Name for the W&B artifact that will be created
         type: str
       artifact_type:
@@ -28,7 +31,8 @@ entry_points:
 
     command: >-
       python run.py --input_artifact {input_artifact} \
-                    --artifact_root {artifact_root} \
+                    --artifact_train_data {artifact_train_data} \
+                    --artifact_test_data {artifact_test_data} \
                     --artifact_type {artifact_type} \
                     --test_size {test_size} \
                     --random_state {random_state} \

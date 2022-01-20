@@ -41,10 +41,13 @@ def go(args):
         for split, df in splits.items():
 
             # Make the artifact name from the provided root plus the name of the split
-            artifact_name = f"{args.artifact_root}_{split}.csv"
+            if (split == "train"):
+                artifact_name = args.artifact_train_data
+            else:
+                artifact_name = args.artifact_test_data
 
             # Get the path on disk within the temp directory
-            temp_path = os.path.join(tmp_dir, artifact_name)
+            temp_path = os.path.join(tmp_dir, str(artifact_name + ".csv"))
 
             logger.info(f"Uploading the {split} dataset to {artifact_name}")
 
@@ -82,7 +85,15 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--artifact_root",
+        "--artifact_train_data",
+        type=str,
+        help="Root for the names of the produced artifacts. The script will produce 2 artifacts: "
+             "{root}_train.csv and {root}_test.csv",
+        required=True,
+    )
+
+    parser.add_argument(
+        "--artifact_test_data",
         type=str,
         help="Root for the names of the produced artifacts. The script will produce 2 artifacts: "
              "{root}_train.csv and {root}_test.csv",

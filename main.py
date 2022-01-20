@@ -15,9 +15,6 @@ def go(config: DictConfig):
     # You can get the path at the root of the MLflow project with this:
     root_path = hydra.utils.get_original_cwd()
 
-    mylist = config["main"]["execute_steps"]
-    print(f"My Step-List type: {type(mylist)}")
-
     # Check which steps we need to execute
     if isinstance(config["main"]["execute_steps"], str):
         # This was passed on the command line as a comma-separated list of steps
@@ -33,8 +30,8 @@ def go(config: DictConfig):
             os.path.join(root_path, "download"),
             "main",
             parameters={
-                "file_url": config["data"]["file_url"],
-                "artifact_name": "raw_data.parquet",
+                "file_url": config['data']['raw_data_file_url'],
+                "artifact_name": config['data']['raw_data_artifact_name'],
                 "artifact_type": "raw_data",
                 "artifact_description": "Data as downloaded"
             }
@@ -47,8 +44,8 @@ def go(config: DictConfig):
             os.path.join(root_path, "preprocess"),
             "main",
             parameters={
-                "input_artifact": "raw_data.parquet:latest",
-                "artifact_name": "preprocessed_data.csv",
+                "input_artifact": f"{config['data']['raw_data_artifact_name']}:latest",
+                "artifact_name": config['data']['cleaned_data_artifact_name'],
                 "artifact_type": "cleaned_data",
                 "artifact_description": "Data preprocessed"
             }
@@ -61,8 +58,8 @@ def go(config: DictConfig):
             os.path.join(root_path, "check_data"),
             "main",
             parameters={
-                "reference_artifact": config["data"]["reference_dataset"],
-                "sample_artifact": "preprocessed_data.csv:latest",
+                "reference_artifact": config['data']['reference_dataset'],
+                "sample_artifact": f"{config['data']['cleaned_data_artifact_name']}:latest",
                 "ks_alpha": config["data"]["ks_alpha"]
             }
         )
@@ -74,12 +71,13 @@ def go(config: DictConfig):
             os.path.join(root_path, "segregate"),
             "main",
             parameters={
-                "input_artifact": "preprocessed_data.csv:latest",
-                "artifact_root": "my_data",
+                "input_artifact": f"{config['data']['cleaned_data_artifact_name']}:latest",
+                "artifact_train_data": config['data']['segregated_train_data_artifact_name'],
+                "artifact_test_data": config['data']['segregated_test_data_artifact_name'],
                 "artifact_type": "segregated_data",
-                "test_size": config["data"]["test_size"],
-                "random_state": config["main"]["random_seed"],
-                "stratify": config["data"]["stratify"]
+                "random_state": config['main']['random_seed'],
+                "test_size": config['data']['test_size'],
+                "stratify": config['data']['stratify']
             }
         )
 
@@ -90,19 +88,19 @@ def go(config: DictConfig):
         model_config = os.path.abspath("random_forest_config.yml")
 
         with open(model_config, "w+") as fp:
-            fp.write(OmegaConf.to_yaml(config["random_forest_pipeline"]))
+            fp.write(OmegaConf.to_yaml(config['random_forest_pipeline']))
 
         ## YOUR CODE HERE: call the random_forest step
         _ = mlflow.run(
             os.path.join(root_path, "random_forest"),
             "main",
             parameters={
-                "train_data": "data_train.csv:latest",
+                "train_data": f"{config['data']['segregated_train_data_artifact_name']}:latest",
                 "model_config": model_config,
-                "export_artifact": config["random_forest_pipeline"]["export_artifact"],
-                "random_seed": config["main"]["random_seed"],
-                "val_size": config["data"]["val_size"],
-                "stratify": config["data"]["stratify"]
+                "export_artifact": config['data']['export_artifact'],
+                "random_seed": config['main']['random_seed'],
+                "val_size": config['data']['val_size'],
+                "stratify": config['data']['stratify']
             }
         )
 
@@ -114,8 +112,8 @@ def go(config: DictConfig):
             os.path.join(root_path, "evaluate"),
             "main",
             parameters={
-                "test_data": "data_test.csv:latest",
-                "model_export": config["random_forest_pipeline"]["export_artifact"]
+                "test_data": f"{config['data']['segregated_test_data_artifact_name']}:latest",
+                "model_export": f"{config['data']['export_artifact']}:latest"
             }
         )
 
